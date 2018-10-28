@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title th:text="${gameQueried.gameName}"></title>
+	</head>
+	<body>
+		<nav id="nav-bar">
+			<ol>
+				<li><a href="http://localhost:8080/games">HOME</a></li>
+				<!--<li><a href="">SEARCH</a></li>-->
+			</ol>
+		</nav>
+		<article id="main">
+			<section class="game-entry">
+        <table id="game-table">
+	        <tr>
+	          <td><img th:src="@{'/images/' + ${gameQueried.getImageUrl()}}"></td>
+				    <td colspan="2" th:text="${gameQueried.getGameName()}"></td>
+	        </tr>
+	        <tr>
+		        <td colspan="3" th:text="${gameQueried.getDescriptionShort()}"></td>
+	        </tr>
+        </table>
+			  <div th:each="t:${gameQueried.tags}">
+				  <p th:text="${t.tag}"></p>
+			  </div>
+        <table>
+				  <tr th:each="review:${gameQueried.reviews}">
+				    <td>This is a game review</td>
+	          <td th:text="${review.getAuthor()}"></td>
+	          <td th:text="${review.getContent()}"></td>
+				  </tr>
+			  </table>
+			</section>
+		</article>

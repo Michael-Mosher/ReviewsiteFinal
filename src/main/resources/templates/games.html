@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>Game On</title>
+	</head>
+	<body>
+		<main id="container">
+        <nav id="nav-bar">
+			    <ol>
+				    <!--<li><a href="">SEARCH</a></li>-->
+			    </ol>
+			    <div id="nav-subbar">
+				    <ol th:each="game:${gamesQueried}">
+					    <li><a th:href="@{/game(gameId=${game.getId()})}" th:text="${game.getGameName()}"></a></li>
+				    </ol>
+			    </div>
+		    </nav>
+
+				    <article id="main" >
+					    <section th:each="g:${gamesQueried}" class="game-entry">
+						    <a th:href="@{/game(gameId=${g.getId()})}">
+							    <img th:src="@{'/images/'+${g.imageUrl}}"></a><a th:href="@{/game(gameId=${g.getId()})}" th:text="${g.getGameName()}"></a>
+					    </section>
+				    </article>
+				<form id="add-game">
+				  <label for="game-name-input" >Game's name: </input>
+				  <input type="text" id="game-name-input" name="name">
+				  <br />
+				  <label for="game-description-input">What is the game about: </label>
+				  <input type="text" maxlength="500" id="game-description-input" name="gameDescription" />
+				  <br />
+				  <input type="hidden" name="imageUrl" value="placeholder.png" readonly="true" />
+				  <br />
+				  <label for="tags-input">Add tags to help players find this game. Separate tags by spaces. If a tag is composed of more than one word use underscores. (e.g. female_protagonist FPS)</input>
+				  <input type"text" id="tags-input" name="tags" />
+				  <br />
+				  <input type="submit" th:formaction="@{add-game}" value="Add Game" form="add-game" />
+				</form>
+		</main>

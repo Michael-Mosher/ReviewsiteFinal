@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title >The Tags</title>
+	</head>
+	<body>
+		<nav id="nav-bar">
+			<ol>
+				<li><a href="">HOME</a></li>
+				<li><a href="">REVIEW SEARCH</a></li>
+				<div id="nav-subbar">
+					<ol th:each="tag:${tagsQueried}">
+						<li><a th:href="@{/tag(tagId=${tag.id})}" th:text="${tag.tag}"></a></li>
+					</ol>
+				</div>
+		</nav>
+		<article id="main">
+		    <section id="tag-entries" th:each="t:${tagsQueried}">
+			    <div class="tag-entry">
+				    <span th:text="${t.tag}"></span>
+			    </div>
+		    </section>
+		</article>

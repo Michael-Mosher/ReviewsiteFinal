@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title th:text="${tagQueried.tag}"></title>
+	</head>
+	<body>
+		<nav id="nav-bar">
+			<ol>
+				<li><a href="">HOME</a></li>
+				<li><a href="">GAME SEARCH</a></li>
+			</ol>
+		</nav>
+		<article id="main">
+                    <section id="tag-entries">
+			    <div class="tag-entry">
+				    <span th:text="${tagQueried.tag}"></span>
+			    </div>
+		    </section>
+		</article>

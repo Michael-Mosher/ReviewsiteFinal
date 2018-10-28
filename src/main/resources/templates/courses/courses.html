@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th-"http://www.thymeleaf.org">
+<head>
+	<title>Courses Available</title>
+</head>
+<body>
+	<div id="container">
+		<div id="main">
+			<div class="course">
+				<p class="courseName" th:attr="data-courseId=${courseId}" th:text="'Course Name: '" />
+				<p class="courseDescription" th:attr"data-courseId=${courseId}" th:text="'Course Description: '" />
+			</div>
+		</div>
+	</div>
+</body>
+</html>
