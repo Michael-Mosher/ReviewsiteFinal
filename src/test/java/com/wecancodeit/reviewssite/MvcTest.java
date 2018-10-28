@@ -3,6 +3,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 import java.util.*;
 import org.junit.Test;
@@ -137,4 +138,5 @@ public class MvcTest {
     when(tagRepo.findById(new Long(lTagId))).thenReturn(Optional.of(oMockTag));
     mvc.perform(get("/tag?tagId=1")).andExpect(model().attribute("tagQueried", is(oMockTag)));
   }
+  
 }

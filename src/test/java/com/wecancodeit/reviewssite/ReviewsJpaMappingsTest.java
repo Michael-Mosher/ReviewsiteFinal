@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.contains;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -123,5 +124,30 @@ public class ReviewsJpaMappingsTest {
 	Optional<Game> oOptionalGame = gameRepo.findById(lFirstGameId);
 	oFirstGame = oOptionalGame.get();
 	assertThat(oFirstGame.getTags(), containsInAnyOrder(oFirstTag, oSecondTag));
+  }
+  
+  @Test
+  public void shouldReturnGamesSortedNameAscending()
+  {
+	Game oGameSkyrim = gameRepo.save(
+			new Game(
+					"Skyrim: Dragons Punked",
+					"Some times the bear eats you, but sometimes you eat the bear",
+					"skyrim.jpg",
+					tagRepo.save(new Tag("FPS"))
+			)
+	);
+	Game oGameDishonored2 = gameRepo.save(
+			new Game(
+					"Dishonored, Again",
+					"When someone takes your toys you kill her, and everyone who has ever helped her",
+					"dis2.jpg",
+					tagRepo.save(new Tag("female protagonist"))
+			)
+	);
+	entityManager.flush();
+	entityManager.clear();
+	Collection<Game> oActualResult = gameRepo.findAllByOrderByNameAsc();
+	assertThat(oActualResult, contains(oGameDishonored2, oGameSkyrim));
   }
 }

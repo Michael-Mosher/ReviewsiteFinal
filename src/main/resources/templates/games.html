@@ -23,17 +23,26 @@
 					    </section>
 				    </article>
 				<form id="add-game">
-				  <label for="game-name-input" >Game's name: </input>
-				  <input type="text" id="game-name-input" name="name">
+				  <h2>Add Game</h2>
+				  <label for="game-name-input" >Game's name: </label>
+				  <input type="text" id="game-name-input" name="name" required="true" />
 				  <br />
 				  <label for="game-description-input">What is the game about: </label>
-				  <input type="text" maxlength="500" id="game-description-input" name="gameDescription" />
+				  <textarea maxlength="500" id="game-description-input" name="gameDescription" required="true"></textarea>
 				  <br />
-				  <input type="hidden" name="imageUrl" value="placeholder.png" readonly="true" />
+				  <input type="hidden" name="imageUrl" value="placeholder.png" readonly="true" required="true" />
 				  <br />
-				  <label for="tags-input">Add tags to help players find this game. Separate tags by spaces. If a tag is composed of more than one word use underscores. (e.g. female_protagonist FPS)</input>
-				  <input type"text" id="tags-input" name="tags" />
+				  <label for="tags-input">Add tags to help players find this game. Separate tags by spaces. If a tag is composed of more than one word use underscores. (e.g. female_protagonist FPS)</label>
+				  <input type"text" id="tags-input" name="tags" required="true" />
 				  <br />
 				  <input type="submit" th:formaction="@{add-game}" value="Add Game" form="add-game" />
 				</form>
+				
+				<form id="remove-game">
+				  <h2>Remove Game</h2>
+          <label for="game-name-input-remove" >Game's name to remove: </label>
+          <input type="text" id="game-name-input-remove" name="gameName" />
+          <br />
+          <input type="submit" th:formaction="@{remove-game}" value="Remove Game" form="remove-game" />
+        </form>
 		</main>

@@ -5,6 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
 import static org.hamcrest.CoreMatchers.is;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.ResourceBundle.Control;
 
 import static java.util.Arrays.asList;
 
@@ -130,4 +132,23 @@ public class ReviewControllerTest {
 	Game newGame = new Game(gameName, gameDesc, gameUrl, new Tag[] {someTag});
 	when(gameRepo.save(newGame)).thenReturn(newGame);
   }
+  
+  @Test
+  public void shouldRemoveGameByName()
+  {
+	String gameName = oGameMockOne.getGameName();
+	Optional<Game> oExpectedReturn = Optional.ofNullable(oGameMockOne);
+	when(gameRepo.findByName(gameName)).thenReturn(oExpectedReturn);
+	oControllerTested.removeGame(gameName);
+	verify(gameRepo).delete(oGameMockOne);
+  }
+  
+  @Test
+  public void shouldRemoveGameById()
+  {
+	long gameId = oGameMockOne.getId();
+	oControllerTested.removeGameById(gameId);
+	verify(gameRepo).deleteById(gameId);
+  }
+  
 }

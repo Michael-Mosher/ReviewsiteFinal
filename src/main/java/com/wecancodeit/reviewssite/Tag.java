@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 @Entity
-class Tag {
+public class Tag {
   @GeneratedValue
   @Id
   private long id;

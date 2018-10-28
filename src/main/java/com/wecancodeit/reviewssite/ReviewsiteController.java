@@ -64,7 +64,7 @@ class ReviewsiteController {
 	  } else if(new Long(lTagId).longValue() > 0L) {
 		oQueryResult = oGameRepository.findByTagsId(new Long(lTagId));
 	  } else */{
-		oQueryResult = (Collection<Game>) oGameRepository.findAll();
+		oQueryResult = (Collection<Game>) oGameRepository.findAllByOrderByNameAsc();
 	  }
 	  model.addAttribute("gamesQueried", oQueryResult);
 	  return "games";
@@ -117,22 +117,46 @@ class ReviewsiteController {
   @RequestMapping("add-game")
   public String addGame(String name, String descriptionShort, String gameUrl, String tags)
   {
-	String [] tagsExploded = tags.replace("  ", " ").split("[ ]+");
-	System.out.println("ReviewsiteController addGame. provided tags: " + tags);
+//	String [] tagsExploded = tags.replace("  ", " ").split("[ ]+");
 //	Tag[] tagsAll = new Tag[0];
-	Collection<Tag> oTagCollection = new ArrayList();
-	System.out.println("ReviewsiteController addGame. After splitting to array: " + tagsExploded.toString());
-	for(int i = 0; i<tagsExploded.length; i++) {
-	  Optional<Tag> oTagMaybe = oTagRepository.findByName(tagsExploded[i]);
-	  if(oTagMaybe.isPresent() && oTagMaybe.get()!=null) {
-		System.out.println("ReviewsiteController addGame. A valid Tag has been found by name. It is: " + oTagMaybe.get().toString());
-		oTagCollection.add((Tag)oTagMaybe.get()); 
-	  }
-	}
+//	for(int i = 0; i<tagsExploded.length; i++) {
+	Optional<Tag> oTagMaybe = oTagRepository.findByName(tags);
+//	  if(oTagMaybe.isPresent() && oTagMaybe.get()!=null) { 
+//	  }
+//	}
 	Optional<Game> oGameMaybe = oGameRepository.findByName(name);
 	if(!oGameMaybe.isPresent()){
-	  oGameRepository.save(new Game(name, descriptionShort, gameUrl, (Tag[])oTagCollection.toArray()));
+//	  if(oTagMaybe.isPresent()) oGameRepository.save(new Game(name, descriptionShort, gameUrl, oTagMaybe.get()));
+	 /* else*/ oGameRepository.save(new Game(name, descriptionShort, gameUrl, oTagMaybe.get()));
 	}
     return "redirect:/games";
+  }
+
+  @RequestMapping("remove-game")
+  public String removeGame(String gameName)
+  {
+    Optional<Game> oGameCheck = oGameRepository.findByName(gameName);
+    if(oGameCheck.isPresent()) {
+      System.out.println("Controller.removeGame. The game is present. We found: " + oGameCheck.get());
+      oGameRepository.delete(oGameCheck.get());
+    }
+    return "redirect:/games";
+  }
+
+  @RequestMapping("remove-game-id")
+  public String removeGameById(long gameId)
+  {
+    oGameRepository.deleteById(new Long(gameId));
+	return "redirect:/games";
+  }
+  
+  @RequestMapping("find-game-by-tag-name")
+  public String queryGamesByTopicName(String tagName, Model model)
+  {
+    Optional<Tag> oTagSought = oTagRepository.findByName(tagName);
+//    Collection<Game> oQueryResult = oGameRepository.findByTagsContainsByOrderByNameAsc(oTagSought.get());
+    Collection<Game> oQueryResult = oGameRepository.findByTagsOrderByNameAsc(oTagSought.get());
+    model.addAttribute("gamesQueried", oQueryResult);
+	return "/games";
   }
 }

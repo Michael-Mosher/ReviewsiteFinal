@@ -10,26 +10,32 @@
 				<!--<li><a href="">SEARCH</a></li>-->
 			</ol>
 		</nav>
-		<article id="main">
-			<section class="game-entry">
-        <table id="game-table">
-	        <tr>
-	          <td><img th:src="@{'/images/' + ${gameQueried.getImageUrl()}}"></td>
-				    <td colspan="2" th:text="${gameQueried.getGameName()}"></td>
-	        </tr>
-	        <tr>
-		        <td colspan="3" th:text="${gameQueried.getDescriptionShort()}"></td>
-	        </tr>
-        </table>
-			  <div th:each="t:${gameQueried.tags}">
-				  <p th:text="${t.tag}"></p>
-			  </div>
-        <table>
-				  <tr th:each="review:${gameQueried.reviews}">
-				    <td>This is a game review</td>
-	          <td th:text="${review.getAuthor()}"></td>
-	          <td th:text="${review.getContent()}"></td>
-				  </tr>
-			  </table>
-			</section>
-		</article>
+		<main id="container">
+  		<article id="main">
+	  		<section class="game-entry">
+          <table id="game-table">
+	          <tr>
+	            <td><img th:src="@{'/images/' + ${gameQueried.getImageUrl()}}"></td>
+				      <td colspan="2" th:text="${gameQueried.getGameName()}"></td>
+  	        </tr>
+	          <tr>
+		          <td colspan="3" th:text="${gameQueried.getDescriptionShort()}"></td>
+	          </tr>
+          </table>
+  			  <div th:each="t:${gameQueried.tags}">
+	  			  <a th:href="@{find-game-by-tag-name(tagName=${t.getTag()})}"><p th:text="${t.tag}"></p></a>
+		  	  </div>
+          <table id="game-reviews">
+				    <tr th:each="review:${gameQueried.reviews}">
+	            <td th:text="${review.getAuthor()}"></td>
+  	          <td th:text="${review.getContent()}"></td>
+	  			  </tr>
+		  	  </table>
+		  	</section>
+		  </article>
+		  <form id="remove-game">
+		    <h2>Permanently Delete This Game</h2>
+		    <input type="number" th:value="${gameQueried.id}" name="gameId" hidden="true" />
+		    <input for="remove-game" type="submit" value="Flush It!" th:formaction="remove-game-id" />
+		  </form>
+		</main>

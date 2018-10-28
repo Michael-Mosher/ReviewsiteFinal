@@ -92,4 +92,12 @@ public boolean equals(Object obj) {
   {
     return this.tags;
   }
+  
+  @Override
+  public String toString()
+  {
+	return "{ type: object, object : { class: Game,name :" + this.name
+			+ ", gameDescriptionShort : " + this.gameDescriptionShort + ", imageUrl : "
+			+ this.imageUrl + "} }";
+  }
 }
