@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.Resource;
 
 import org.assertj.core.util.Arrays;
+import org.omg.IOP.TAG_RMI_CUSTOM_MAX_STREAM_FORMAT;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -97,6 +98,14 @@ class ReviewsiteController {
 	model.addAttribute("gamesQueried", oQueryResult);
 	return "games";
   }
+  
+  @RequestMapping("/review")
+  public String findReviewById(@RequestParam(value="reviewId") long reviewId, Model model)
+  {
+	Optional<Review> oReviewSought = oReviewRepository.findById(reviewId);
+	if(oReviewSought.isPresent()) model.addAttribute("reviewQueried", oReviewSought.get());
+	return "review";
+  }
 
   @RequestMapping("/search-by-game")
   public String findTagsByGame(Game gameSought, Model model)
@@ -104,14 +113,6 @@ class ReviewsiteController {
 	Collection<Tag> oQueryResult = (Collection<Tag>)oTagRepository.findByGamesContains(gameSought);
 	model.addAttribute("tagsQueried", oQueryResult);
 	return "tags";
-  }
-
-  @RequestMapping("/get-game-reviews")
-  public String findReviewsByGame(Game gameParent, Model model)
-  {
-	Collection<Review> oQueryResult = oReviewRepository.findByGame(gameParent);
-	model.addAttribute("reviewsQueried", oQueryResult);
-	return "reviews";
   }
 
   @RequestMapping("add-game")
@@ -151,12 +152,45 @@ class ReviewsiteController {
   }
   
   @RequestMapping("find-game-by-tag-name")
-  public String queryGamesByTopicName(String tagName, Model model)
+  public String queryGamesByTopicName(String tag, Model model)
   {
-    Optional<Tag> oTagSought = oTagRepository.findByName(tagName);
+    Optional<Tag> oTagSought = oTagRepository.findByName(tag);
 //    Collection<Game> oQueryResult = oGameRepository.findByTagsContainsByOrderByNameAsc(oTagSought.get());
     Collection<Game> oQueryResult = oGameRepository.findByTagsOrderByNameAsc(oTagSought.get());
     model.addAttribute("gamesQueried", oQueryResult);
 	return "/games";
+  }
+  
+  @RequestMapping("count-tag-use")
+  public String queryTagUseCount(Model model)
+  {
+	Collection<Tag> theTags = (Collection<Tag>) oTagRepository.findAll();
+	Collection<Long> oTagCount = oGameRepository.countByTags(theTags);
+	model.addAttribute("tagsCount", oTagCount);
+	return "/tags";
+  }
+  
+  @RequestMapping("find-reviews-by-tag")
+  public String findReviewsByGameTags(String tag, Model model)
+  {
+	Optional<Tag> oTagTest = oTagRepository.findByName(tag);
+	if(oTagTest.isPresent()) {
+      Collection<Game> oTaggedGames = oGameRepository.findByTagsOrderByNameAsc(oTagTest.get());
+      System.out.println("Controller.findReviewsByGameTags. The tag, " + tag + ", was found. The number of games associated: " + oTaggedGames.size());
+      if(!oTaggedGames.isEmpty()){
+    	Collection<Review> oReviewsOfTagged = null;
+    	for (Game game : oTaggedGames){
+    	  if(oReviewsOfTagged==null){
+    		oReviewsOfTagged = oReviewRepository.findByGameName(game.getGameName());
+    		System.out.println("Controller.findReviewsByGameTags. The first first game has returned: " + oReviewsOfTagged.size());
+    	  } else {
+	        oReviewsOfTagged.addAll(oReviewRepository.findByGameName(game.getGameName()));
+	        System.out.println("Controller.findReviewsByGameTags. The subsequent review query has returned: " + oReviewsOfTagged.size());
+    	  }
+		}
+    	model.addAttribute("reviewsQueried", oReviewsOfTagged);
+      }
+	}
+	return "/reviews";
   }
 }

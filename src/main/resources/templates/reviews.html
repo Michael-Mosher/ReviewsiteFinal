@@ -4,12 +4,21 @@
 		<title>Game Reviews For Those of Sturdy Constitution</title>
 	</head>
 	<body>
-		<div id="container">
-			<div id="header">
+		<main id="container">
+			<nav id="header">
+			  <ol>
+			    <li><a href="http://localhost:8080/games">HOME</a></li>
+          <li><form id="search-games-by-tag"><label for="game-search-tag-name-input">GAME SEARCH</label>
+            <input type="text" id="game-search-tag-name-input" name="tag" />
+            <input type="submit" value="submit" form="search-games-by-tag" th:formaction="@{find-game-by-tag-name}" /></form></li>
+          <li><form id="search-reviews-by-tag"><label for="review-search-tag-name-input">REVIEW SEARCH</label>
+            <input type="text" id="review-search-tag-name-input" name="tag" />
+            <input type="submit" value="submit" form="search-reviews-by-tag" th:formaction="@{find-reviews-by-tag}" /></form></li>
+			  </ol>
 				<h1>Game Reviews For Those of Sturdy Constitution</h1>
 				<h4>!!1!! MOAR !!!1!!1!!! RAGEQUIT !!1!!</h4>
-			</div>
-			<div id="main">
+			</nav>
+			<article id="main">
 				<table id="reviews-list">
 					<thead>
 						<tr>
@@ -17,13 +26,13 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="review-entry" th:each="review:${reviews}">
-							<td><a th:href="@{/review(reviewId=${review.id})}" ><img th:src="@{'/images/' + ${review.imageUrl}}"></img></a></td>
-							<td><a th:href="@{/review(reviewId=${review.id})}" th:text="${review.title}"></a></td>
-							<td><a th:href="@{/review(reviewId=${review.id})}" th:text="${review.category}"></a></td>
+						<tr class="review-entry" th:each="review:${reviewsQueried}">
+							<td><a th:href="@{/review(reviewId=${review.id})}" ><img th:src="@{'/images/' + ${review.getGame().imageUrl}}"></img></a></td>
+							<td><a th:href="@{/review(reviewId=${review.id})}" th:text="@{'Game Title: '+${review.getGame().getGameName()}}"></a></td>
+							<td><a th:href="@{/review(reviewId=${review.id})}" th:text="@{'Review Author: '+${review.getAuthor()}}"></a></td>
 						</tr>
-			</div>
-		</div>
-	</body>
-</html>
+					</tbody>
+				</table>
+			</article>
+		</main>
 

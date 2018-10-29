@@ -110,15 +110,6 @@ public class ReviewControllerTest {
 	oControllerTested.findTagsByGame(oGameMockOne, oMockModel);
 	verify(oMockModel).addAttribute("tagsQueried", oExpectedCollection);
   }
-
-  @Test
-  public void shouldAddReviewsByGame()
-  {
-	Collection<Review> oExpectedCollection = Arrays.asList(oReviewMockOne);
-	when(reviewRepo.findByGame(oGameMockOne)).thenReturn(oExpectedCollection);
-	oControllerTested.findReviewsByGame(oGameMockOne, oMockModel);
-	verify(oMockModel).addAttribute("reviewsQueried", oExpectedCollection);
-  }
   
   @Test
   public void shouldAddNewGameWithTopics()

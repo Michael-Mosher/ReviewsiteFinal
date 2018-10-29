@@ -12,4 +12,5 @@ interface IGameRepository extends CrudRepository<Game, Long>
   Optional<Game> findByName(String name);
   Collection<Game> findAllByOrderByNameAsc();
   Collection<Game> findByTagsOrderByNameAsc(Tag tag);
+  Collection<Long> countByTags(Collection<Tag> tags);
 }

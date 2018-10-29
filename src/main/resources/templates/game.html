@@ -7,7 +7,12 @@
 		<nav id="nav-bar">
 			<ol>
 				<li><a href="http://localhost:8080/games">HOME</a></li>
-				<!--<li><a href="">SEARCH</a></li>-->
+        <li><form id="search-games-by-tag"><label for="game-search-tag-name-input">GAME SEARCH</label>
+            <input type="text" id="game-search-tag-name-input" name="tag" />
+            <input type="submit" value="submit" form="search-games-by-tag" th:formaction="@{find-game-by-tag-name}" /></form></li>
+        <li><form id="search-reviews-by-tag"><label for="review-search-tag-name-input">REVIEW SEARCH</label>
+            <input type="text" id="review-search-tag-name-input" name="tag" />
+            <input type="submit" value="submit" form="search-reviews-by-tag" th:formaction="@{find-reviews-by-tag}" /></form></li>
 			</ol>
 		</nav>
 		<main id="container">
