@@ -25,3 +25,7 @@
 /nbdist/
 /.nb-gradle/
 /bin
+
+### Node ###
+/src/test/js/node_modules/
+/src/test/JavaScript/
