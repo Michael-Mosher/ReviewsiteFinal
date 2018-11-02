@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<title th:text="${reviewQueried.getGame().getGameName()}"></title>
+		<link href="http://localhost:8080/css/style.css" rel="stylesheet" />
 	</head>
 	<body>
 		<main id="container">
@@ -19,14 +20,14 @@
 				<h1 th:text="${reviewQueried.getReviewTitle()}"></h1>
 			</nav>
 			<article id="main">
-				<table id="reviews">
-					<tr class="review-caption">
+				<table id="game-reviews">
+					<tr class="review-entry">
 						<td><img th:src="@{'/images/' + ${reviewQueried.getGame().getImageUrl()}}"></td>
 						<td colspan="2" th:text="${reviewQueried.getAuthor()}">
 						</td>
 						<td th:text="${reviewQueried.getReviewTitle()}"></td>
 					</tr>
-					<tr class="review-body">
+					<tr class="review-entry">
 						<td colspan="4" th:text="${reviewQueried.getContent()}"></td>
 					</tr>
 				</table>

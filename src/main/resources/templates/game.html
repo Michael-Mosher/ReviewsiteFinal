@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<title th:text="${gameQueried.gameName}"></title>
+		<link href="http://localhost:8080/css/style.css" rel="stylesheet" />
 	</head>
 	<body>
 		<nav id="nav-bar">
@@ -31,7 +32,7 @@
 	  			  <a th:href="@{find-game-by-tag-name(tagName=${t.getTag()})}"><p th:text="${t.tag}"></p></a>
 		  	  </div>
           <table id="game-reviews">
-				    <tr th:each="review:${gameQueried.reviews}">
+				    <tr th:each="review:${gameQueried.reviews}" class="review-entry">
 	            <td th:text="${review.getAuthor()}"></td>
   	          <td th:text="${review.getContent()}"></td>
 	  			  </tr>
