@@ -193,4 +193,11 @@ class ReviewsiteController {
 	}
 	return "/reviews";
   }
+  
+  @RequestMapping("/tags/{tagName}")
+  public String addTagAsynchronously(String tagName)
+  {
+	Optional<Tag> oTagCheck = oTagRepository.findByName(tagName);
+	
+  }
 }
