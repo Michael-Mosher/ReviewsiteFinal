@@ -1,6 +1,8 @@
 package com.wecancodeit.reviewssite;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
@@ -9,8 +11,10 @@ import org.assertj.core.util.Arrays;
 import org.omg.IOP.TAG_RMI_CUSTOM_MAX_STREAM_FORMAT;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.MultiValueMap;
 
 @Controller
 class ReviewsiteController {
@@ -194,10 +198,27 @@ class ReviewsiteController {
 	return "/reviews";
   }
   
-  @RequestMapping("/tags/{tagName}")
-  public String addTagAsynchronously(String tagName)
+  @RequestMapping("/game/{gameId}/addTag")
+  public String addTagAsynchronously(@PathVariable ("gameId") long gameId, @RequestParam MapMultiValue<String,String> restArgs)
   {
-	Optional<Tag> oTagCheck = oTagRepository.findByName(tagName);
-	
+	if(restArgs.containsKey("tagName")){
+      List<String> oTagList = restArgs.get("tagName").get(0);
+      for( String tagName : oTagList) {
+	    tagName = tagName.trim().substring(0, 1).toUpperCase() + tagName.trim().toLowerCase().substring(1, 255);
+	    Optional<Tag> oTagCheck = oTagRepository.findByName(tagName);
+	    Tag oTagToAdd = null;
+	    if(!oTagCheck.isPresent()){
+		  oTagToAdd = oTagRepository.save(new Tag(tagName));
+	    } else {
+		  oTagToAdd = oTagCheck.get();
+	    }
+      }
+	  return "added-review-confirmation";
+	} else {
+	  return "";
+	}
   }
+  
+  @RequestMapping("/game/{gameId}/addReview")
+  public String addReviewAsynchronously(@PathVariable("gameId") long)
 }
