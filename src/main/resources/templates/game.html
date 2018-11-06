@@ -28,14 +28,27 @@
 		          <td colspan="3" th:text="${gameQueried.getDescriptionShort()}"></td>
 	          </tr>
           </table>
-  			  <div th:each="t:${gameQueried.tags}">
-	  			  <a th:href="@{find-game-by-tag-name(tagName=${t.getTag()})}"><p th:text="${t.tag}"></p></a>
+  			  <div id="game-tags">
+	  			  <p th:each="t:${gameQueried.tags}"><a th:href="@{find-game-by-tag-name(tagName=${t.getTag()})}">[[${t.tag}]]</a>&nbsp;&nbsp;</p>
+	  			  <br />
+		  	  </div>
+		  	  <div id="add-new-tags">
+		  	    <label for="add-new-tags">Add any tags relevant to help categorize this game</label>
+            <input type="text" class="add-new-tags" />
+            <input type="text" class="add-new-tags" />
+            <input type="text" class="add-new-tags" />
+            <input type="submit" value="Add Tags" id="async-add-tags-button"  />
 		  	  </div>
           <table id="game-reviews">
-				    <tr th:each="review:${gameQueried.reviews}" class="review-entry">
-	            <td th:text="${review.getAuthor()}"></td>
-  	          <td th:text="${review.getContent()}"></td>
-	  			  </tr>
+            <tbody>
+				      <tr th:each="review:${gameQueried.reviews}" class="review-entry">
+	              <td ><span>Author: [[${review.getAuthor()}]]</span><br /><span>Title: [[${review.getReviewTitle()}]]</span></td>
+  	            <td colspan="3" th:text="${review.getContent()}"></td>
+	  			    </tr>
+	  			  </tbody>
+	  			  <tfooter id="add-new-review">
+	  			    <td>Give us your opinion on [[${gameQueried.getGameName()}]]</td><td><label for="reviewAuthor">Who are you: </label><input type="text" id="reviewAuthor" /></td><td><label for="reviewContent">Loud and proud: </label><textarea id="reviewContent"></textarea></td><td><label for="reviewTitle">Optionally, summarize with a review title</label><input type="text" id="reviewTitle" /><input type="submit" value="Add Review" id="add-review-submit" /></td>
+	  			  </tfooter>
 		  	  </table>
 		  	</section>
 		  </article>
@@ -45,3 +58,73 @@
 		    <input for="remove-game" type="submit" value="Flush It!" th:formaction="remove-game-id" />
 		  </form>
 		</main>
+		<script>
+		  function asyncAddTags(evt){
+		    let sPayload = "http://localhost:8080/game/" + [[${gameQueried.getId()}]] + "/addTag?";
+		    const oInputCollection = document.getElementsByClassName("add-new-tags");
+		    let bFirstTag = true;
+		    let sPrefix = "";
+		    for(let i = 0; i<oInputCollection.length; i++){
+		      if(oInputCollection[i].value.trim().length>0){
+		        if(bFirstTag){
+		          bFirstTag = false;
+		        } else {
+		          sPrefix = "&";
+		        }
+		        sPayload += `${sPrefix}tagName=` + oInputCollection[i].value.trim();
+		        let newParagraph = document.createElement("p");
+		        newParagraph.innerText = oInputCollection[i].value.trim();
+		        document.getElementById("game-tags").appendChild(newParagraph);
+		      }
+		    }
+		    let sOriginalDestination = "http://localhost:8080/game/" + [[${gameQueried.getId()}]] + "/addTag?";
+		    if(sPayload.length>sOriginalDestination.length){
+		      fetch(sPayload).then(
+		        (response) => response.text()
+		      ).then(
+		        (text) => {
+		          /*const newDiv = document.createElement("div");
+		          newDiv.innerHtml = text;*/
+		          document.getElementById("add-new-tags").insertAdjacentHTML(`afterbegin`, text);
+		        }
+		      ).catch(
+		        (error) => console.log(`asyncAddTags fetch attempt to ${sPayload}: error.getMessage()`)
+		      );
+		    }
+		  }
+		  function asyncAddReview(evt){
+        let sPayload = "http://localhost:8080/game/" + [[${gameQueried.getId()}]] + "/addReview?";
+        // <td><label for="reviewAuthor">Who are you: </label><input type="text" id="reviewAuthor" /></td><td><label for="reviewContent">Loud and proud: </label>
+        // <textarea id="reviewContent"></textarea></td><td><label for="reviewTitle">Optionally, summarize with a review title</label><input type="text" id="reviewTitle" /><input type="submit" value="Add Review" id="add-review-submit" /></td>
+        const reviewAuthor = document.getElementById(`reviewAuthor`).value.trim();
+        const reviewTitle = document.getElementById(`reviewTitle`).value.trim();
+        const reviewContent = document.getElementById(`reviewContent`).value.trim();
+        sPayload += `reviewAuthor=${reviewAuthor}&reviewTitle=${reviewTitle}&reviewContent=${reviewContent}`;
+        if(reviewAuthor.length>0 && reviewContent.length>0){
+          let newRow = document.createElement("tr");
+          newRow.insertAdjacentHTML(`beforeend`, `<td><span>Author: ${reviewAuthor}</span><br /><span>Title: ${reviewTitle}</span></td>`);
+          newRow.insertAdjacentHTML(`beforeend`, `<td colspan="3">${reviewContent}</td>`);
+          const oRowCollection = document.querySelectorAll(`#game-reviews tbody tr`);
+          let oCurrentLastRow = oRowCollection[oRowCollection.length-1];
+          oCurrentLastRow.parentElement.insertBefore(newRow, oCurrentLastRow.nextElementSibling);
+          let sOriginalDestination = "http://localhost:8080/game/" + [[${gameQueried.getId()}]] + "/addReview?";
+          fetch(sPayload).then(
+            (response) => response.text()
+          ).then(
+            (text) => {
+              document.getElementById("add-new-review").insertAdjacentHTML(`afterbegin`, text);
+            }
+          ).catch(
+            (error) => console.log(`asyncAddReview fetch attempt to ${sPayload}: error.getMessage()`)
+          );
+        }
+      }
+		  // String author, String reviewContent, Game gameParent, String reviewTitle
+		  document.addEventListener("readystatechange", (evt) => {
+		      if(evt.target.readyState==="interactive"){
+		        document.getElementById("async-add-tags-button").addEventListener("click", asyncAddTags);
+		        document.getElementById("add-review-submit").addEventListener("click", asyncAddReview);
+		      }
+		    }
+		  );
+		</script>

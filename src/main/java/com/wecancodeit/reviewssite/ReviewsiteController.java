@@ -199,26 +199,36 @@ class ReviewsiteController {
   }
   
   @RequestMapping("/game/{gameId}/addTag")
-  public String addTagAsynchronously(@PathVariable ("gameId") long gameId, @RequestParam MapMultiValue<String,String> restArgs)
+  public String addTagAsynchronously(@PathVariable ("gameId") long gameId, @RequestParam List<String> tagName)
   {
-	if(restArgs.containsKey("tagName")){
-      List<String> oTagList = restArgs.get("tagName").get(0);
-      for( String tagName : oTagList) {
-	    tagName = tagName.trim().substring(0, 1).toUpperCase() + tagName.trim().toLowerCase().substring(1, 255);
-	    Optional<Tag> oTagCheck = oTagRepository.findByName(tagName);
+	System.out.println("addTagAsynchronously. The tags provided: " + tagName.get(0));
+	if(tagName.isEmpty()){
+	  return "";
+	} else {
+      Optional<Game> theGame = oGameRepository.findById(gameId);
+      for( String name : tagName) {
+	    name = name.trim().substring(0, 1).toUpperCase() + name.trim().toLowerCase().substring(1, name.trim().length());
+	    Optional<Tag> oTagCheck = oTagRepository.findByName(name);
 	    Tag oTagToAdd = null;
+	    System.out.println("addTagAsynchrously. Looping through tagName. Current: " + name);
 	    if(!oTagCheck.isPresent()){
-		  oTagToAdd = oTagRepository.save(new Tag(tagName));
+		  oTagToAdd = oTagRepository.save(new Tag(name));
 	    } else {
 		  oTagToAdd = oTagCheck.get();
 	    }
+	    theGame.get().addTag(oTagToAdd);
       }
-	  return "added-review-confirmation";
-	} else {
-	  return "";
+	  return "partials/added-tag-confirmation";
 	}
   }
   
   @RequestMapping("/game/{gameId}/addReview")
-  public String addReviewAsynchronously(@PathVariable("gameId") long)
+  public String addReviewAsynchronously(@PathVariable("gameId") long gameId, @RequestParam String reviewAuthor, @RequestParam String reviewContent, @RequestParam(value="reviewTitle", required=false) String reviewTitle)
+  {
+	Optional<Game> oTheGame = oGameRepository.findById(gameId);
+	if(oTheGame.isPresent() && !reviewAuthor.isEmpty() && !reviewContent.isEmpty()){
+      oReviewRepository.save(new Review(reviewAuthor, reviewContent, oTheGame.get(), reviewTitle));
+	}
+	return "partials/added-review-confirmation";
+  }
 }

@@ -25,15 +25,15 @@ a:focus, a:hover {
   font-family: Tahoma, Geneva, Verdana, sans-serif;
   padding: 2rem 3rem;
 }
-#header ol, #header ul, #nav-subbar ol, #nav-subbar ul {
+#header ol, #header ul, #nav-subbar ol, #nav-subbar ul, #nav-bar ol, #nav-bar ul {
   list-style-type: none;
   overflow: hidden;
   padding: 0rem 2rem;
 }
-#header li, #nav-subbar li {
+#header li, #nav-subbar li, #nav-bar li {
   float: left;
 }
-#header li a, #nav-subbar li a {
+#header li a, #nav-subbar li a, #nav-bar li a {
   display: block;
   color: darkslategrey;
 }
@@ -75,6 +75,17 @@ article a {
   border-block-end: double 1rem  black;
   padding: 2rem;
 }
+#game-tags a, #game-tags a {
+  display: block;
+  float: left;
+  width: fit-content;
+}
+#game-tags a:focus, #game-tags a:hover {
+  background-color: darkslategrey;
+  color: ivory;
+}
+
+
 /*id="reviews"*/
 #game-reviews {
   -webkit-box-shadow: inset 0.7rem 1rem 0rem 0rem rgba(1, 70, 127, 0.75);
