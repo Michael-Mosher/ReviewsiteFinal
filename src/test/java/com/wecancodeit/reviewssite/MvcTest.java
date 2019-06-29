@@ -3,11 +3,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 
 import java.util.*;
 
-import org.hamcrest.core.Is;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -15,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -127,7 +124,7 @@ public class MvcTest {
     mvc.perform(get("/tag?tagId=1")).andExpect(view().name(is("tag")));
   }
   
-  @Test(expected = org.springframework.web.util.NestedServletException.class) // TagNotFoundException.class)
+  @Test(expected = org.springframework.web.util.NestedServletException.class) // TagNotFoundException.class
   public void shouldNotBeOkForSingleTag() throws Exception
   {
     mvc.perform(get("/tag?tagId=12345")).andExpect(status().isNotFound());	
@@ -172,7 +169,6 @@ public class MvcTest {
     when(tagRepo.findByGamesContains(oMockGame)).thenReturn(oTagsToRemove);
     when(gameRepo.findByTagsContainsAndDeleted(oMockTag, false)).thenReturn(Arrays.asList(new Game[] { oMockGame, oAnotherMockGame }));
     mvc.perform(get("/remove-game?gameName="+gameNameToRemove)).andExpect(view().name(is("redirect:/games")));
-    // gameRepo.delete(oMockGame);
     when(gameRepo.findByName(gameNameToRemove)).thenReturn(Optional.empty());
     when(gameRepo.findByTagsAndDeletedOrderByNameAsc(oMockTag, false)).thenReturn(Arrays.asList(new Game[] { oAnotherMockGame }));
     mvc.perform(get("/find-game-by-tag-name?tagName=FPS")).andExpect(model().attribute(
@@ -180,20 +176,5 @@ public class MvcTest {
         is(Arrays.asList(new Game[] { oAnotherMockGame })))
     );
   }
-    
-  /*  "remove-game")
-  public String removeGame(String gameName)
-  {
-    Optional<Game> oGameCheck = oGameRepository.findByName(gameName);
-    if(oGameCheck.isPresent()) {
-	  System.out.println("Controller.removeGame. The game is present. We found: " + oGameCheck.get());
-	  Collection<Tag> tagsToRemove =  oGameCheck.get().getTags();
-	  for (Tag someTag : tagsToRemove) {
-		  oGameCheck.get().removeTag(someTag);
-	  }
-	  oGameRepository.delete(oGameCheck.get());
-    }
-    return "redirect:/games";
-  }*/
   
 }

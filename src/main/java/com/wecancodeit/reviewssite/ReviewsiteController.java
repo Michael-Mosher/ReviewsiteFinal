@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
-import org.omg.IOP.TAG_RMI_CUSTOM_MAX_STREAM_FORMAT;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,20 +22,6 @@ class ReviewsiteController {
   @Resource
   ITagRepository oTagRepository;
   
-//  @RequestMapping("/reviews")
-//  public String findAllReviews(Model model)
-//  {
-//    model.addAttribute("reviews", oReviewRepository.getAllEntries());
-//	return "reviews";
-//  }
-//  
-//  @RequestMapping("/review")
-//  public String findAReview(@RequestParam(value="reviewId", required=false, 
-//	      defaultValue="")String reviewId, Model model)
-//  {
-//	  model.addAttribute("review", oReviewRepository.getEntry(new Long(reviewId)));
-//	  return "review";
-//  }
   @RequestMapping("/game")
 	public String findOneGame(@RequestParam(value="gameId") long lGameId, Model model) throws GameNotFoundException
 	{
@@ -44,9 +29,7 @@ class ReviewsiteController {
 	  if(game.isPresent()){
 		model.addAttribute("gameQueried", game.get());
   		Collection<Tag> oAssociatedTags = oTagRepository.findByGamesContains(game.get());
-//		Collection<Review> oAssociatedReview = oReviewRepository.findByGame(game.get());
   		model.addAttribute("associatedTags", oAssociatedTags);
-//		model.addAttribute("associatedReviews", oAssociatedReview);
 		return "game";
 	  } else {
 		  throw new GameNotFoundException();
@@ -143,16 +126,7 @@ class ReviewsiteController {
 	Optional<Game> oGameCheck = oGameRepository.findByName(gameName);
 	System.out.println("removeGame Was the game, " + gameName + ", found: " + oGameCheck.isPresent());
     if(oGameCheck.isPresent()) {
-	  int i;
 	  System.out.println("Controller.removeGame. The game is present. We found: " + oGameCheck.get());
-	  /* Collection<Tag> tagsToRemove =  oGameCheck.get().getTags();
-	  for(i = tagsToRemove.size() -1; i>-1; i--){
-		oGameCheck.get().removeTag((Tag) tagsToRemove.toArray()[i]);
-	  }
-	  Collection<Review> reviewsToRemove = oGameCheck.get().getReviews();
-	  for(i = reviewsToRemove.size() -1; i>-1; i--){
-		oGameCheck.get().removeReview((Review) reviewsToRemove.toArray()[i]);
-	  } */
 	  oGameCheck.get().delete();
 	  oGameRepository.save(oGameCheck.get());
 	  System.out.println("removeGame after Game.delete. The game is deleted: " + oGameCheck.get().isDeleted());

@@ -1,27 +1,18 @@
 package com.wecancodeit.reviewssite;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.ResourceBundle.Control;
-
-import static java.util.Arrays.asList;
-
-import javax.annotation.Resource;
 
 public class ReviewControllerTest {
   @InjectMocks
@@ -107,22 +98,6 @@ public class ReviewControllerTest {
     oControllerTested.findTagsByGame(oGameMockOne, oMockModel);
     verify(oMockModel).addAttribute("tagsQueried", oExpectedCollection);
   }
-  
-  /*@Test
-  public void shouldAddNewGameWithTopics()
-  {
-	String someTagText = "topics";
-	Tag someTag = new Tag(someTagText);
-	String gameName = "game name";
-	String gameDesc = "game desc";
-  String gameUrl = "test.jpg";
-  when(tagRepo.findByName(someTagText)).thenReturn(null);
-  when(gameRepo.findByName(gameName)).thenReturn(null);
-  when(oMockGameMaybe.isPresent()).thenReturn(false);
-	oControllerTested.addGame(gameName, gameDesc, gameUrl, someTagText);
-	Game newGame = new Game(gameName, gameDesc, gameUrl, new Tag[] {someTag});
-	when(gameRepo.save(newGame)).thenReturn(newGame);
-  }*/
   
   @Test
   public void shouldRemoveGameByName()
