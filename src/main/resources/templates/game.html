@@ -1,64 +1,90 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<title th:text="${gameQueried.gameName}"></title>
-		<link href="http://localhost:8080/css/style.css" rel="stylesheet" />
-	</head>
-	<body>
-		<nav id="nav-bar">
-			<ol>
-				<li><a href="http://localhost:8080/games">HOME</a></li>
-        <li><form id="search-games-by-tag"><label for="game-search-tag-name-input">GAME SEARCH</label>
-            <input type="text" id="game-search-tag-name-input" name="tag" />
-            <input type="submit" value="submit" form="search-games-by-tag" th:formaction="@{find-game-by-tag-name}" /></form></li>
-        <li><form id="search-reviews-by-tag"><label for="review-search-tag-name-input">REVIEW SEARCH</label>
+  <head>
+    <title th:text="${gameQueried.gameName}"></title>
+    <link href="http://localhost:8080/css/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav id="nav-bar">
+      <ol>
+        <li><a href="http://localhost:8080/games">HOME</a></li>
+        <li>
+          <form id="search-games-by-tag"><label for="game-search-tag-name-input">GAME TAG SEARCH</label>
+            <input type="text" id="game-search-tag-name-input" name="tagName" />
+            <input type="submit" value="submit" form="search-games-by-tag" th:formaction="@{find-game-by-tag-name}" />
+          </form>
+	</li>
+        <li>
+          <form id="search-reviews-by-tag">
+            <label for="review-search-tag-name-input">REVIEW TAG SEARCH</label>
             <input type="text" id="review-search-tag-name-input" name="tag" />
-            <input type="submit" value="submit" form="search-reviews-by-tag" th:formaction="@{find-reviews-by-tag}" /></form></li>
-			</ol>
-		</nav>
-		<main id="container">
-  		<article id="main">
-	  		<section class="game-entry">
+            <input type="submit" value="submit" form="search-reviews-by-tag" th:formaction="@{find-reviews-by-tag}" />
+	  </form>
+	</li>
+      </ol>
+    </nav>
+    <main id="container">
+      <article id="main">
+        <section class="game-entry">
           <table id="game-table">
-	          <tr>
-	            <td><img th:src="@{'/images/' + ${gameQueried.getImageUrl()}}"></td>
-				      <td colspan="2" th:text="${gameQueried.getGameName()}"></td>
-  	        </tr>
-	          <tr>
-		          <td colspan="3" th:text="${gameQueried.getDescriptionShort()}"></td>
-	          </tr>
+            <tr>
+              <td><img th:src="@{'/images/' + ${gameQueried.getImageUrl()}}"></td>
+              <td colspan="2" th:text="${gameQueried.getGameName()}"></td>
+            </tr>
+            <tr>
+              <td colspan="3" th:text="${gameQueried.getDescriptionShort()}"></td>
+            </tr>
           </table>
-  			  <div id="game-tags">
-	  			  <p th:each="t:${gameQueried.tags}"><a th:href="@{find-game-by-tag-name(tagName=${t.getTag()})}">[[${t.tag}]]</a>&nbsp;&nbsp;</p>
-	  			  <br />
-		  	  </div>
-		  	  <div id="add-new-tags">
-		  	    <label for="add-new-tags">Add any tags relevant to help categorize this game</label>
+          <div id="game-tags">
+            <p th:each="t:${gameQueried.tags}">
+	      <a th:href="@{find-game-by-tag-name(tagName=${t.getTag()})}">[[${t.tag}]]</a>
+	      &nbsp;&nbsp;
+	    </p>
+            <br />
+          </div>
+ 	  <div id="add-new-tags">
+  	    <label for="add-new-tags">Add any tags relevant to help categorize this game</label>
             <input type="text" class="add-new-tags" />
             <input type="text" class="add-new-tags" />
             <input type="text" class="add-new-tags" />
             <input type="submit" value="Add Tags" id="async-add-tags-button"  />
-		  	  </div>
+  	  </div>
           <table id="game-reviews">
             <tbody>
-				      <tr th:each="review:${gameQueried.reviews}" class="review-entry">
-	              <td ><span>Author: [[${review.getAuthor()}]]</span><br /><span>Title: [[${review.getReviewTitle()}]]</span></td>
-  	            <td colspan="3" th:text="${review.getContent()}"></td>
-	  			    </tr>
-	  			  </tbody>
-	  			  <tfooter id="add-new-review">
-	  			    <td>Give us your opinion on [[${gameQueried.getGameName()}]]</td><td><label for="reviewAuthor">Who are you: </label><input type="text" id="reviewAuthor" /></td><td><label for="reviewContent">Loud and proud: </label><textarea id="reviewContent"></textarea></td><td><label for="reviewTitle">Optionally, summarize with a review title</label><input type="text" id="reviewTitle" /><input type="submit" value="Add Review" id="add-review-submit" /></td>
-	  			  </tfooter>
-		  	  </table>
-		  	</section>
-		  </article>
-		  <form id="remove-game">
-		    <h2>Permanently Delete This Game</h2>
-		    <input type="number" th:value="${gameQueried.id}" name="gameId" hidden="true" />
-		    <input for="remove-game" type="submit" value="Flush It!" th:formaction="remove-game-id" />
-		  </form>
-		</main>
-		<script>
+	      <tr th:each="review:${gameQueried.reviews}" class="review-entry">
+                <td >
+                  <span>Author: [[${review.getAuthor()}]]</span>
+		  <br />
+		  <span>Title: [[${review.getReviewTitle()}]]</span>
+		</td>
+                <td colspan="3" th:text="${review.getContent()}"></td>
+              </tr>
+            </tbody>
+            <tfooter id="add-new-review">
+              <td>Give us your opinion on [[${gameQueried.getGameName()}]]</td>
+	      <td>
+                <label for="reviewAuthor">Who are you: </label>
+		<input type="text" id="reviewAuthor" />
+	      </td>
+	      <td>
+                <label for="reviewContent">Loud and proud: </label>
+		<textarea id="reviewContent"></textarea>
+	      </td>
+	      <td>
+                <label for="reviewTitle">Optionally, summarize with a review title</label>
+		<input type="text" id="reviewTitle" /><input type="submit" value="Add Review" id="add-review-submit" />
+	      </td>
+            </tfooter>
+  	  </table>
+  	</section>
+      </article>
+      <form id="remove-game">
+        <h2>Permanently Delete This Game</h2>
+        <input type="number" th:value="${gameQueried.id}" name="gameId" hidden="true" />
+        <input for="remove-game" type="submit" value="Flush It!" th:formaction="remove-game-id" />
+      </form>
+    </main>
+    <script>
 		  function asyncAddTags(evt){
 		    let sPayload = "http://localhost:8080/game/" + [[${gameQueried.getId()}]] + "/addTag?";
 		    const oInputCollection = document.getElementsByClassName("add-new-tags");

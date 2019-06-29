@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - ReviewssiteApplication",
+            "request": "launch",
+            "mainClass": "com.wecancodeit.reviewssite.ReviewssiteApplication",
+            "projectName": "reviewssite"
+        }
+    ]
+}

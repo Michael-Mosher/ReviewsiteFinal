@@ -15,10 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.jayway.jsonpath.Option;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DataJpaTest
@@ -88,9 +85,9 @@ public class ReviewsJpaMappingsTest {
 	Game oSecondGame = gameRepo.save(new Game("Another Name", "better description", "skyrim.jpg", oFirstTag));
 	entityManager.flush();
 	entityManager.clear();
-	Collection<Game> oGamesForFirstTag = gameRepo.findByTagsContains(oFirstTag);
+	Collection<Game> oGamesForFirstTag = gameRepo.findByTagsContainsAndDeleted(oFirstTag, false);
 	assertThat(oGamesForFirstTag, containsInAnyOrder(oFirstGame, oSecondGame));
-	Collection<Game> oGamesForSecondTag = gameRepo.findByTagsContains(oSecondTag);
+	Collection<Game> oGamesForSecondTag = gameRepo.findByTagsContainsAndDeleted(oSecondTag, false);
 	assertThat(oGamesForSecondTag, containsInAnyOrder(oFirstGame));
   }
   
@@ -105,9 +102,9 @@ public class ReviewsJpaMappingsTest {
 	Game oSecondGame = gameRepo.save(new Game("Another Name", "better description", "skyrim.jpg", oFirstTag));
 	entityManager.flush();
 	entityManager.clear();
-	Collection<Game> oGamesForFirstTag = gameRepo.findByTagsId(lFirstTag);
+	Collection<Game> oGamesForFirstTag = gameRepo.findByTagsIdAndDeleted(lFirstTag, false);
 	assertThat(oGamesForFirstTag, containsInAnyOrder(oFirstGame, oSecondGame));
-	Collection<Game> oGamesForSecondTag = gameRepo.findByTagsId(lSecondTag);
+	Collection<Game> oGamesForSecondTag = gameRepo.findByTagsIdAndDeleted(lSecondTag, false);
 	assertThat(oGamesForSecondTag, containsInAnyOrder(oFirstGame));
   }
   
@@ -117,13 +114,30 @@ public class ReviewsJpaMappingsTest {
 	Tag oFirstTag = tagRepo.save(new Tag("FPS"));
     Tag oSecondTag = tagRepo.save(new Tag("female protagonist"));
 	Game oFirstGame = gameRepo.save(new Game("Game Name", "Game description",  "dis2.jpg", oSecondTag, oFirstTag));
-	Game oSecondGame = gameRepo.save(new Game("Another Name", "better description", "skyrim.jpg", oFirstTag));
 	long lFirstGameId = oFirstGame.getId();
 	entityManager.flush();
 	entityManager.clear();
 	Optional<Game> oOptionalGame = gameRepo.findById(lFirstGameId);
 	oFirstGame = oOptionalGame.get();
 	assertThat(oFirstGame.getTags(), containsInAnyOrder(oFirstTag, oSecondTag));
+  }
+
+  @Test
+  public void confirmTagRemovedFromGame()
+  {
+	Tag oFirstTag = tagRepo.save(new Tag("FPS"));
+    Tag oSecondTag = tagRepo.save(new Tag("female protagonist"));
+	Game oFirstGame = gameRepo.save(new Game("Game Name", "Game description",  "dis2.jpg", oSecondTag, oFirstTag));
+	Game oSecondGame = gameRepo.save(new Game("Another Name", "better description", "skyrim.jpg", oFirstTag));
+	long lFirstGameId = oFirstGame.getId();
+	oFirstGame.removeTag(oFirstTag);
+	entityManager.flush();
+	entityManager.clear();
+	Optional<Game> oOptionalGame = gameRepo.findById(lFirstGameId);
+	oFirstGame = oOptionalGame.get();
+	assertThat(oFirstGame.getTags(), containsInAnyOrder(oSecondTag));
+	assertThat(oSecondGame.getTags(), containsInAnyOrder(oFirstTag));
+	assertThat(tagRepo.findByGamesContains(oSecondGame), containsInAnyOrder(oFirstTag));
   }
   
   @Test
@@ -147,7 +161,7 @@ public class ReviewsJpaMappingsTest {
 	);
 	entityManager.flush();
 	entityManager.clear();
-	Collection<Game> oActualResult = gameRepo.findAllByOrderByNameAsc();
+	Collection<Game> oActualResult = gameRepo.findByDeletedOrderByNameAsc(false);
 	assertThat(oActualResult, contains(oGameDishonored2, oGameSkyrim));
   }
 }
