@@ -1,5 +1,7 @@
 package com.wecancodeit.reviewssite;
 
+import static org.mockito.ArgumentMatchers.isNotNull;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -155,12 +157,14 @@ class ReviewsiteController {
   }
   
   @RequestMapping("find-game-by-tag-name")
-  public String queryGamesByTopicName(@RequestParam(value="tagName") String tagName, Model model)
+  public String queryGamesByTopicName(
+	  @RequestParam(value="tagName", required = false, defaultValue = "") String tagName,
+	  @RequestParam(value="tag", required = false, defaultValue = "") String tag, Model model)
   {
+	tagName = tagName.length()>0 ? tagName : tag;
 	Collection<Game> oQueryResult;
 	Tag oTagActual = new Tag(tagName);
 	Optional<Tag> oTagSought = oTagRepository.findByName(oTagActual.getTag());
-	System.out.println("find-game-by-tag-name tagName: " + tagName + " was found by repository: " + oTagSought.isPresent());
 	if(oTagSought.isPresent()){
 	  oQueryResult = oGameRepository.findByTagsAndDeletedOrderByNameAsc(oTagSought.get(), false);
 	  model.addAttribute("gamesQueried", oQueryResult);

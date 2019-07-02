@@ -113,14 +113,14 @@ public class MvcTest {
   @Test
   public void shouldBeOkForTag() throws Exception
   {
-	when(tagRepo.findById(1L)).thenReturn(Optional.of(oMockTag));
-	mvc.perform(get("/tag?tagId=1")).andExpect(status().isOk());
+	  when(tagRepo.findById(1L)).thenReturn(Optional.of(oMockTag));
+	  mvc.perform(get("/tag?tagId=1")).andExpect(status().isOk());
   }
   
   @Test
   public void assertRouteToTagView() throws Exception
   {
-	when(tagRepo.findById(1L)).thenReturn(Optional.of(oMockTag));
+	  when(tagRepo.findById(1L)).thenReturn(Optional.of(oMockTag));
     mvc.perform(get("/tag?tagId=1")).andExpect(view().name(is("tag")));
   }
   
@@ -146,9 +146,6 @@ public class MvcTest {
     when(tagRepo.findByName(testTagName)).thenReturn(Optional.ofNullable(oMockTag));
     Collection<Game> collectionExpected = Arrays.asList(new Game[] { oMockGame, oAnotherMockGame });
     when(gameRepo.findByTagsAndDeletedOrderByNameAsc(oMockTag, false)).thenReturn(collectionExpected);
-    mvc.perform(get("/find-game-by-tag-name?tagName=" + testTagName)).andExpect(
-        model().attribute("gamesQueried", is(collectionExpected))
-    );
     mvc.perform(get("/find-game-by-tag-name?tagName=" + testTagName)).andExpect(view().name(is("/games")));
   }
 
