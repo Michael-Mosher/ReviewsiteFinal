@@ -1,55 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<title>Game On</title>
-		<link href="http://localhost:8080/css/style.css" rel="stylesheet" />
-	</head>
-	<body>
-		<main id="container">
-        <nav id="nav-bar">
-			    <ol>
-				    <li><a href="http://localhost:8080/games">HOME</a></li>
-            <li><form id="search-games-by-tag"><label for="game-search-tag-name-input">GAME SEARCH</label>
-              <input type="text" id="game-search-tag-name-input" name="tag" />
-              <input type="submit" value="submit" form="search-games-by-tag" th:formaction="@{find-game-by-tag-name}" /></form></li>
-            <li><form id="search-reviews-by-tag"><label for="review-search-tag-name-input">REVIEW SEARCH</label>
+  <head>
+    <title>Game On</title>
+    <link href="http://localhost:8080/css/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main id="container">
+      <nav id="nav-bar">
+        <ol>
+	  <li><a href="http://localhost:8080/games">HOME</a></li>
+          <li>
+            <form id="search-games-by-tag"><label for="game-search-tag-name-input">GAME TAG SEARCH</label>
+              <input type="text" id="game-search-tag-name-input" name="tagName" />
+              <input type="submit" value="submit" form="search-games-by-tag" th:formaction="@{find-game-by-tag-name}" />
+	    </form>
+	  </li>
+          <li>
+            <form id="search-reviews-by-tag">
+              <label for="review-search-tag-name-input">REVIEW TAG SEARCH</label>
               <input type="text" id="review-search-tag-name-input" name="tag" />
-              <input type="submit" value="submit" form="search-reviews-by-tag" th:formaction="@{find-reviews-by-tag}" /></form></li>
-			    </ol>
-			    <div id="nav-subbar">
-				    <ol>
-					    <li th:each="game:${gamesQueried}"><a th:href="@{/game(gameId=${game.getId()})}" th:text="${game.getGameName()}"></a></li>
-				    </ol>
-			    </div>
-		    </nav>
-
-				    <article id="main" >
-					    <section th:each="g:${gamesQueried}" class="game-entry">
-						    <a th:href="@{/game(gameId=${g.getId()})}">
-							    <img th:src="@{'/images/'+${g.imageUrl}}"></a><a th:href="@{/game(gameId=${g.getId()})}" th:text="${g.getGameName()}"></a>
-					    </section>
-				    </article>
-				<form id="add-game">
-				  <h2>Add Game</h2>
-				  <label for="game-name-input" >Game's name: </label>
-				  <input type="text" id="game-name-input" name="name" required="true" />
-				  <br />
-				  <label for="game-description-input">What is the game about: </label>
-				  <textarea maxlength="500" id="game-description-input" name="gameDescription" required="true"></textarea>
-				  <br />
-				  <input type="hidden" name="imageUrl" value="placeholder.png" readonly="true" required="true" />
-				  <br />
-				  <label for="tags-input">Add tags to help players find this game. Separate tags by spaces. If a tag is composed of more than one word use underscores. (e.g. female_protagonist FPS)</label>
-				  <input type"text" id="tags-input" name="tags" required="true" />
-				  <br />
-				  <input type="submit" th:formaction="@{add-game}" value="Add Game" form="add-game" />
-				</form>
-				
-				<form id="remove-game">
-				  <h2>Remove Game</h2>
-          <label for="game-name-input-remove" >Game's name to remove: </label>
-          <input type="text" id="game-name-input-remove" name="gameName" />
-          <br />
-          <input type="submit" th:formaction="@{remove-game}" value="Remove Game" form="remove-game" />
-        </form>
-		</main>
+              <input type="submit" value="submit" form="search-reviews-by-tag" th:formaction="@{find-reviews-by-tag}" />
+	    </form>
+	  </li>
+        </ol>
+        <div id="nav-subbar">
+	  <ol>
+            <li th:each="game:${gamesQueried}">
+              <a th:href="@{/game(gameId=${game.getId()})}" th:text="${game.getGameName()}"></a>
+	    </li>
+          </ol>
+        </div>
+      </nav>
+      <article id="main" >
+        <section th:each="g:${gamesQueried}" class="game-entry">
+          <a th:href="@{/game(gameId=${g.getId()})}">
+            <img th:src="@{'/images/'+${g.imageUrl}}">
+	  </a>
+          <a th:href="@{/game(gameId=${g.getId()})}" th:text="${g.getGameName()}"></a>
+        </section>
+      </article>
+      <form id="add-game">
+        <h2>Add Game</h2>
+        <label for="game-name-input" >Game's name: </label>
+        <input type="text" id="game-name-input" name="name" required="true" />
+        <br />
+        <label for="game-description-input">What is the game about: </label>
+        <textarea maxlength="500" id="game-description-input" name="gameDescription" required="true"></textarea>
+        <br />
+        <input type="hidden" name="imageUrl" value="placeholder.png" readonly="true" required="true" />
+        <br />
+        <label for="tags-input">Add tags to help players find this game. Separate tags by spaces. If a tag is composed of more than one word use underscores. (e.g. female_protagonist FPS)</label>
+        <input type"text" id="tags-input" name="tags" required="true" />
+        <br />
+        <input type="submit" th:formaction="@{add-game}" value="Add Game" form="add-game" />
+      </form>
+      <form id="remove-game">
+        <h2>Remove Game</h2>
+        <label for="game-name-input-remove" >Game's name to remove: </label>
+        <input type="text" id="game-name-input-remove" name="gameName" />
+        <br />
+        <input type="submit" th:formaction="@{remove-game}" value="Remove Game" form="remove-game" />
+      </form>
+    </main>

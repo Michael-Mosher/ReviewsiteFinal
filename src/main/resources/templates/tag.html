@@ -6,9 +6,18 @@
 	<body>
 		<nav id="nav-bar">
 			<ol>
-				<li><a href="">HOME</a></li>
-				<li><a href="">GAME SEARCH</a></li>
-			</ol>
+				<li><a href="http://localhost:8080/games">HOME</a></li>
+				<li><form id="search-games-by-tag"><label for="game-search-tag-name-input">GAME TAG SEARCH</label>
+                    <input type="text" id="game-search-tag-name-input" name="tagName" />
+                    <input type="submit" value="submit" form="search-games-by-tag" th:formaction="@{find-game-by-tag-name}" /></form></li>
+				<li><form id="search-reviews-by-tag"><label for="review-search-tag-name-input">REVIEW TAG SEARCH</label>
+				    <input type="text" id="review-search-tag-name-input" name="tagName" />
+				    <input type="submit" value="submit" form="search-reviews-by-tag" th:formaction="@{find-reviews-by-tag}" /></form></li>
+				<div id="nav-subbar">
+					<ol>
+						<li th:each="tag:${tagsQueried}"><a th:href="@{/tag(tagId=${tag.getId()})}" th:text="${tag.getTag()}"></a></li>
+					</ol>
+				</div>
 		</nav>
 		<article id="main">
                     <section id="tag-entries">

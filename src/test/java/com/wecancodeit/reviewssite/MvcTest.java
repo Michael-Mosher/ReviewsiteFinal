@@ -3,9 +3,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 
 import java.util.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -49,10 +48,10 @@ public class MvcTest {
 	mvc.perform(get("/games?tagName=&tagId=")).andExpect(status().isOk());
   }
   
-  @Test(expected = GameNotFoundException.class)
-  public void assertGamesStatusNotFound() throws Exception
+  @Test
+  public void assertGamesNoTagStatusOk() throws Exception
   {
-    mvc.perform(get("/games")).andExpect(status().isNotFound());
+    mvc.perform(get("/games")).andExpect(status().isOk());
   }
   
   @Test
@@ -77,10 +76,10 @@ public class MvcTest {
     mvc.perform(get("/game?gameId=1")).andExpect(view().name(is("game")));
   }
   
-  @Test(expected = GameNotFoundException.class)
-  public void shouldNotBeOkForSingleGame() throws Exception
+  @Test(expected = java.lang.AssertionError.class)
+  public void shouldBeAssertionErrorForGameNoId() throws Exception
   {
-    mvc.perform(get("/game?gameId=1")).andExpect(status().isNotFound());	
+    mvc.perform(get("/game?gameId=")).andExpect(status().isNotFound());	
   }
   
   @Test
@@ -114,21 +113,21 @@ public class MvcTest {
   @Test
   public void shouldBeOkForTag() throws Exception
   {
-	when(tagRepo.findById(1L)).thenReturn(Optional.of(oMockTag));
-	mvc.perform(get("/tag?tagId=1")).andExpect(status().isOk());
+	  when(tagRepo.findById(1L)).thenReturn(Optional.of(oMockTag));
+	  mvc.perform(get("/tag?tagId=1")).andExpect(status().isOk());
   }
   
   @Test
   public void assertRouteToTagView() throws Exception
   {
-	when(tagRepo.findById(1L)).thenReturn(Optional.of(oMockTag));
+	  when(tagRepo.findById(1L)).thenReturn(Optional.of(oMockTag));
     mvc.perform(get("/tag?tagId=1")).andExpect(view().name(is("tag")));
   }
   
-  @Test(expected = TagNotFoundException.class)
+  @Test(expected = org.springframework.web.util.NestedServletException.class) // TagNotFoundException.class
   public void shouldNotBeOkForSingleTag() throws Exception
   {
-    mvc.perform(get("/tag?tagId=1")).andExpect(status().isNotFound());	
+    mvc.perform(get("/tag?tagId=12345")).andExpect(status().isNotFound());	
   }
   
   @Test
@@ -137,6 +136,42 @@ public class MvcTest {
     long lTagId = 1;
     when(tagRepo.findById(new Long(lTagId))).thenReturn(Optional.of(oMockTag));
     mvc.perform(get("/tag?tagId=1")).andExpect(model().attribute("tagQueried", is(oMockTag)));
+  }
+
+  @Test
+  public void assertFindGameByTagNameReturnsGames() throws Exception
+  {
+    String testTagName = "Female_Protagonist";
+    when(oMockTag.getTag()).thenReturn(testTagName);
+    when(tagRepo.findByName(testTagName)).thenReturn(Optional.ofNullable(oMockTag));
+    Collection<Game> collectionExpected = Arrays.asList(new Game[] { oMockGame, oAnotherMockGame });
+    when(gameRepo.findByTagsAndDeletedOrderByNameAsc(oMockTag, false)).thenReturn(collectionExpected);
+    mvc.perform(get("/find-game-by-tag-name?tagName=" + testTagName)).andExpect(view().name(is("/games")));
+  }
+
+  @Test
+  public void assertRemoveGameWillDelete() throws Exception
+  {
+    String gameNameToRemove = "We Happy Few";
+    String tagNameAssociated = "FPS";
+    when(gameRepo.findByName(gameNameToRemove)).thenReturn(Optional.of(oMockGame));
+    when(tagRepo.findByName(tagNameAssociated)).thenReturn(Optional.of(oMockTag));
+    Collection<Game> originalGameCollection = Arrays.asList(new Game[] { oMockGame, oAnotherMockGame });
+    when(gameRepo.findByTagsAndDeletedOrderByNameAsc(oMockTag, false)).thenReturn(originalGameCollection);
+    mvc.perform(get("/find-game-by-tag-name?tagName=FPS")).andExpect(model().attribute(
+        "gamesQueried",
+        is(originalGameCollection))
+    );
+    Collection<Tag> oTagsToRemove = Arrays.asList(new Tag[] { oMockTag, oAnotherMockTag });
+    when(tagRepo.findByGamesContains(oMockGame)).thenReturn(oTagsToRemove);
+    when(gameRepo.findByTagsContainsAndDeleted(oMockTag, false)).thenReturn(Arrays.asList(new Game[] { oMockGame, oAnotherMockGame }));
+    mvc.perform(get("/remove-game?gameName="+gameNameToRemove)).andExpect(view().name(is("redirect:/games")));
+    when(gameRepo.findByName(gameNameToRemove)).thenReturn(Optional.empty());
+    when(gameRepo.findByTagsAndDeletedOrderByNameAsc(oMockTag, false)).thenReturn(Arrays.asList(new Game[] { oAnotherMockGame }));
+    mvc.perform(get("/find-game-by-tag-name?tagName=FPS")).andExpect(model().attribute(
+        "gamesQueried",
+        is(Arrays.asList(new Game[] { oAnotherMockGame })))
+    );
   }
   
 }
