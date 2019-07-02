@@ -28,9 +28,9 @@
 					</thead>
 					<tbody>
 						<tr class="review-entry" th:each="review:${reviewsQueried}">
-							<td><a th:href="@{/review(reviewId=${review.id})}" ><img th:src="@{'/images/' + ${review.getGame().imageUrl}}"></img></a></td>
-							<td><a th:href="@{/review(reviewId=${review.id})}" th:text="@{'Game Title: '+${review.getGame().getGameName()}}"></a></td>
-							<td><a th:href="@{/review(reviewId=${review.id})}" th:text="@{'Review Author: '+${review.getAuthor()}}"></a></td>
+							<td><a th:href="@{/review(reviewId=${review.id})}" ><img th:src="@{'/images/' + ${review.getGame().getImageUrl()}}"></img></a></td>
+							<td><a th:href="@{/game(gameId=${review.getGame().getId()})}" th:text="@{'Game Title: '+${review.getGame().getGameName()}}"></a></td>
+							<td><a th:href="@{/review(reviewId=${review.getId()})}" th:text="@{'Review Author: '+${review.getAuthor()}}"></a></td>
 						</tr>
 					</tbody>
 				</table>
